@@ -102,9 +102,10 @@ function bindEvents() {
     $('tab-signals').hidden = t.dataset.tab !== 'signals';
     $('tab-sources').hidden = t.dataset.tab !== 'sources';
   });
-  $('favFloat').onclick = openDrawer;
+  $('favFloat').onclick = () => { $('favDrawer').hidden ? openDrawer() : closeDrawer(); };
   $('btnCloseDrawer').onclick = closeDrawer;
   $('drawerMask').onclick = closeDrawer;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('favDrawer').hidden) closeDrawer(); });
   $('btnExportCsv').onclick = () => exportFav('csv');
   $('btnExportJson').onclick = () => exportFav('json');
   $('btnClearFav').onclick = async () => {
