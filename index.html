@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特斯拉 Model 3/Y CAN 信号数据库</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <h1>特斯拉 Model 3/Y CAN 信号数据库</h1>
+    <p class="sub">汇总自 <b id="srcCount">–</b> 个公开出处，共 <b id="sigCount">–</b> 条信号 · 数据截至 2026-09-21 · 仅社区逆向资料，非官方规范</p>
+    <nav class="tabs">
+      <button class="tab active" data-tab="signals">信号列表</button>
+      <button class="tab" data-tab="sources">出处清单</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 信号列表 -->
+  <section id="tab-signals">
+    <div class="filters">
+      <input id="fKeyword" type="text" placeholder="关键词：信号名 / 报文名 / 描述 / 单位">
+      <input id="fCanId" type="text" placeholder="CAN ID（支持 0x370 或 880）">
+      <select id="fEndian">
+        <option value="">字节序：全部</option>
+        <option value="小端">小端</option>
+        <option value="大端">大端</option>
+      </select>
+      <select id="fJuniper">
+        <option value="">Juniper 适用性：全部</option>
+        <option value="已确认">已确认</option>
+        <option value="有差异">有差异</option>
+        <option value="未确认">未确认</option>
+      </select>
+      <select id="fDiff">
+        <option value="">版本差异：全部</option>
+        <option value="yes">有差异</option>
+        <option value="no">无差异</option>
+      </select>
+      <select id="fFix">
+        <option value="">修正建议：全部</option>
+        <option value="yes">有修正建议</option>
+        <option value="no">无修正建议</option>
+      </select>
+      <label class="check"><input id="fFavOnly" type="checkbox"> 仅看收藏</label>
+      <button id="btnSearch" class="primary">筛选</button>
+      <button id="btnClear">清空</button>
+    </div>
+
+    <div class="toolbar">
+      <span id="resultInfo" class="info">加载中…</span>
+      <span class="sort">排序：
+        <button id="sortId" class="link">按 CAN ID ↑</button>
+      </span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="sigTable">
+        <thead>
+          <tr>
+            <th class="c-fav">收藏</th>
+            <th>CAN ID(16进制)</th>
+            <th>CAN ID(10进制)</th>
+            <th>报文名</th>
+            <th>信号名</th>
+            <th>起始位</th>
+            <th>长度</th>
+            <th>字节序</th>
+            <th>因子</th>
+            <th>偏移</th>
+            <th>单位</th>
+            <th>Juniper</th>
+            <th>详情</th>
+          </tr>
+        </thead>
+        <tbody id="sigBody"></tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <button id="pgPrev">‹ 上一页</button>
+      <span id="pgInfo"></span>
+      <button id="pgNext">下一页 ›</button>
+      <span class="jump">跳到 <input id="pgJump" type="number" min="1"> 页 <button id="pgGo">Go</button></span>
+    </div>
+  </section>
+
+  <!-- 出处清单 -->
+  <section id="tab-sources" hidden>
+    <div class="table-wrap">
+      <table id="srcTable">
+        <thead>
+          <tr>
+            <th>编号</th><th>出处名</th><th>渠道</th><th>链接</th><th>许可证</th><th>备注</th>
+          </tr>
+        </thead>
+        <tbody id="srcBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- 悬浮收藏按钮 -->
+<button id="favFloat" class="fav-float" title="打开收藏列表">
+  <span class="star">★</span> 收藏 <span id="favCount" class="badge">0</span>
+</button>
+
+<!-- 收藏抽屉 -->
+<div id="drawerMask" class="mask" hidden></div>
+<aside id="favDrawer" class="drawer" hidden>
+  <div class="drawer-head">
+    <h2>我的收藏 <span id="drawerCount"></span></h2>
+    <div class="drawer-actions">
+      <button id="btnExportCsv">导出 CSV</button>
+      <button id="btnExportJson">导出 JSON</button>
+      <button id="btnClearFav" class="danger">清空</button>
+      <button id="btnCloseDrawer">关闭 ✕</button>
+    </div>
+  </div>
+  <div class="drawer-hint">按 CAN ID 分组排序 · 收藏保存在本浏览器 IndexedDB，换设备不会同步</div>
+  <div id="favGroups" class="fav-groups"></div>
+</aside>
+
+<script src="app.js"></script>
+</body>
+</html>
