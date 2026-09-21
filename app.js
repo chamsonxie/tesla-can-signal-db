@@ -67,6 +67,11 @@ async function init() {
     fetch('sources.json').then(r => r.json())
   ]);
   DATA = d; SOURCES = s;
+  // 预解析每个信号的出处编号（如 S1、S2…），供出处筛选使用
+  DATA.forEach(r => {
+    r.codes = String(r.src).split('；').map(seg => seg.trim().split(/\s+/)[0]).filter(c => /^S\d+$/.test(c));
+  });
+  renderSourceFilter();
   $('sigCount').textContent = DATA.length.toLocaleString();
   $('srcCount').textContent = SOURCES.length;
   try {
@@ -84,7 +89,7 @@ function bindEvents() {
   $('btnSearch').onclick = () => { page = 1; applyFilters(); };
   $('btnClear').onclick = () => {
     ['fKeyword','fCanId'].forEach(i => $(i).value = '');
-    ['fEndian','fJuniper','fDiff','fFix'].forEach(i => $(i).value = '');
+    ['fEndian','fJuniper','fDiff','fFix','fSource'].forEach(i => $(i).value = '');
     $('fFavOnly').checked = false; page = 1; applyFilters();
   };
   [$('fKeyword'), $('fCanId')].forEach(el =>
@@ -116,6 +121,17 @@ function bindEvents() {
   };
 }
 
+/* ---------- 出处筛选下拉 ---------- */
+function renderSourceFilter() {
+  const sel = $('fSource');
+  SOURCES.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = s.id + ' ' + s.name;
+    sel.appendChild(opt);
+  });
+}
+
 /* ---------- 筛选 ---------- */
 function parseCanIdInput(text) {
   text = text.trim().toLowerCase();
@@ -135,6 +151,7 @@ function applyFilters() {
   const diff = $('fDiff').value;
   const fix = $('fFix').value;
   const favOnly = $('fFavOnly').checked;
+  const srcCode = $('fSource').value;
 
   filtered = DATA.map((r, i) => ({ r, i })).filter(({ r, i }) => {
     if (favOnly && !favMap.has(i)) return false;
@@ -154,6 +171,7 @@ function applyFilters() {
     if (diff === 'no' && r.diff) return false;
     if (fix === 'yes' && !r.fix) return false;
     if (fix === 'no' && r.fix) return false;
+    if (srcCode && !(r.codes || []).includes(srcCode)) return false;
     return true;
   });
 
