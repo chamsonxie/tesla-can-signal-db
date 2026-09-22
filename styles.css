@@ -40,6 +40,9 @@ tbody tr:hover{background:#f3f8f7}
 
 button.fav-btn{background:none;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:15px;line-height:1;padding:4px 8px;color:#b9c2cf}
 button.fav-btn.on{color:var(--gold);border-color:var(--gold);background:#fffbe8}
+button.copy-btn{background:none;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;padding:4px 8px;color:#8a94a6;margin-left:4px}
+button.copy-btn:hover{color:var(--brand);border-color:var(--brand)}
+button.copy-btn.ok{color:#14743a;border-color:#14743a;background:#e6f7ee}
 button.detail-btn{background:none;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:12px;padding:4px 10px;color:var(--brand)}
 tr.detail-row td{background:#fbfdfc}
 .detail-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;padding:6px 4px}

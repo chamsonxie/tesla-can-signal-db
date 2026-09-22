@@ -196,7 +196,8 @@ function renderTable() {
   for (const { r, i } of slice) {
     const fav = favMap.has(i);
     html += '<tr data-rid="' + i + '">'
-      + '<td><button class="fav-btn' + (fav ? ' on' : '') + '" data-fav="' + i + '" title="' + (fav ? '取消收藏' : '收藏') + '">★</button></td>'
+      + '<td><button class="fav-btn' + (fav ? ' on' : '') + '" data-fav="' + i + '" title="' + (fav ? '取消收藏' : '收藏') + '">★</button>'
+      + ' <button class="copy-btn" data-copy="' + i + '" title="复制信号信息">⧉</button></td>'
       + '<td class="canid">' + esc(r.id16) + '</td>'
       + '<td class="canid">' + esc(r.id10) + '</td>'
       + '<td class="msg-name">' + esc(r.msg) + '</td>'
@@ -218,7 +219,51 @@ function renderTable() {
   $('pgNext').disabled = page >= t;
 
   body.querySelectorAll('[data-fav]').forEach(b => b.onclick = e => { e.stopPropagation(); toggleFav(parseInt(b.dataset.fav, 10)); });
+  body.querySelectorAll('[data-copy]').forEach(b => b.onclick = e => { e.stopPropagation(); copySignal(parseInt(b.dataset.copy, 10), b); });
   body.querySelectorAll('[data-detail]').forEach(b => b.onclick = () => toggleDetail(b));
+}
+
+/* ---------- 复制信号信息 ---------- */
+function signalText(r) {
+  const v = x => (x == null || x === '' ? '' : String(x));
+  return [
+    'CAN ID: ' + v(r.id16) + ' (' + v(r.id10) + ')',
+    '报文: ' + v(r.msg),
+    '信号: ' + v(r.sig),
+    '起始位: ' + v(r.bit) + ' | 长度: ' + v(r.len) + ' | 字节序: ' + v(r.bo),
+    '因子: ' + v(r.f) + ' | 偏移: ' + v(r.o) + ' | 单位: ' + v(r.unit),
+    '取值范围: ' + v(r.rng),
+    '信号描述: ' + v(r.desc),
+    '各出处定义: ' + v(r.src),
+    '差异标注: ' + v(r.diff),
+    '修正建议: ' + v(r.fix),
+    'Juniper 适用性: ' + v(r.jun)
+  ].join('\n');
+}
+
+async function copySignal(rid, btn) {
+  const text = signalText(DATA[rid]);
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  } catch (e) {
+    // 降级：非安全上下文时用临时 textarea
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      ok = document.execCommand('copy');
+      ta.remove();
+    } catch (e2) { ok = false; }
+  }
+  if (btn) {
+    const old = btn.textContent;
+    btn.textContent = ok ? '✓' : '✕';
+    btn.classList.toggle('ok', ok);
+    setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1200);
+  }
 }
 
 function toggleDetail(btn) {
