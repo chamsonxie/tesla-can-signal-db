@@ -4,7 +4,7 @@
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
-.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.wrap{padding:0 24px}
 .topbar{background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;padding:22px 0 0}
 .topbar h1{margin:0;font-size:22px}
 .topbar .sub{opacity:.9;font-size:13px;margin:8px 0 0}
