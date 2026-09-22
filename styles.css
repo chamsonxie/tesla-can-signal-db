@@ -30,6 +30,7 @@ thead th{position:sticky;top:0;background:#eef2f7;z-index:2;padding:9px 8px;text
 tbody td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
 tbody tr:hover{background:#f3f8f7}
 .sig-name{font-family:ui-monospace,Consolas,monospace;font-weight:600;color:#0b4f6c;word-break:break-all}
+.cn-name{color:#1a7a3c;word-break:break-all}
 .msg-name{font-family:ui-monospace,Consolas,monospace;color:#334155;word-break:break-all}
 .canid{font-family:ui-monospace,Consolas,monospace;font-weight:600}
 .tag{display:inline-block;padding:1px 8px;border-radius:20px;font-size:12px;white-space:nowrap}

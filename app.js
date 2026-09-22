@@ -156,7 +156,7 @@ function applyFilters() {
   filtered = DATA.map((r, i) => ({ r, i })).filter(({ r, i }) => {
     if (favOnly && !favMap.has(i)) return false;
     if (kw) {
-      const hay = (r.sig + ' ' + r.msg + ' ' + r.desc + ' ' + r.unit + ' ' + r.src).toLowerCase();
+      const hay = (r.sig + ' ' + (r.cn || '') + ' ' + r.msg + ' ' + r.desc + ' ' + r.unit + ' ' + r.src).toLowerCase();
       if (!hay.includes(kw)) return false;
     }
     if (canRaw) {
@@ -202,6 +202,7 @@ function renderTable() {
       + '<td class="canid">' + esc(r.id10) + '</td>'
       + '<td class="msg-name">' + esc(r.msg) + '</td>'
       + '<td class="sig-name">' + esc(r.sig) + '</td>'
+      + '<td class="cn-name">' + esc(r.cn) + '</td>'
       + '<td>' + esc(r.bit) + '</td>'
       + '<td>' + esc(r.len) + '</td>'
       + '<td>' + esc(r.bo) + '</td>'
@@ -212,7 +213,7 @@ function renderTable() {
       + '<td><button class="detail-btn" data-detail="' + i + '">展开</button></td>'
       + '</tr>';
   }
-  body.innerHTML = html || '<tr><td colspan="13" class="empty">没有匹配的信号</td></tr>';
+  body.innerHTML = html || '<tr><td colspan="14" class="empty">没有匹配的信号</td></tr>';
   $('resultInfo').textContent = '共 ' + filtered.length.toLocaleString() + ' 条信号（收藏 ' + favMap.size + ' 条）';
   $('pgInfo').textContent = '第 ' + page + ' / ' + t + ' 页';
   $('pgPrev').disabled = page <= 1;
@@ -230,6 +231,7 @@ function signalText(r) {
     'CAN ID: ' + v(r.id16) + ' (' + v(r.id10) + ')',
     '报文: ' + v(r.msg),
     '信号: ' + v(r.sig),
+    '中文含义: ' + v(r.cn),
     '起始位: ' + v(r.bit) + ' | 长度: ' + v(r.len) + ' | 字节序: ' + v(r.bo),
     '因子: ' + v(r.f) + ' | 偏移: ' + v(r.o) + ' | 单位: ' + v(r.unit),
     '取值范围: ' + v(r.rng),
@@ -276,7 +278,8 @@ function toggleDetail(btn) {
     '<div class="d-item"><b>' + label + '</b><div class="' + (pre ? 'pre' : '') + '">' + (esc(val) || '–') + '</div></div>';
   const dr = document.createElement('tr');
   dr.className = 'detail-row';
-  dr.innerHTML = '<td colspan="13"><div class="detail-box">'
+  dr.innerHTML = '<td colspan="14"><div class="detail-box">'
+    + item('中文含义', r.cn)
     + item('取值范围', r.rng)
     + item('信号描述', r.desc)
     + item('各出处定义', r.src, true)
@@ -376,8 +379,8 @@ function exportFav(fmt) {
   if (fmt === 'json') {
     download('tesla-can-收藏_' + stamp + '.json', JSON.stringify(list, null, 2), 'application/json');
   } else {
-    const cols = ['id16','id10','msg','sig','bit','len','bo','f','o','unit','rng','desc','src','diff','fix','jun','addedAt'];
-    const head = ['CAN ID(16进制)','CAN ID(10进制)','报文名','信号名','起始位','长度','字节序','因子','偏移','单位','取值范围','信号描述','各出处定义','差异标注','修正建议','Juniper适用性','收藏时间'];
+    const cols = ['id16','id10','msg','sig','cn','bit','len','bo','f','o','unit','rng','desc','src','diff','fix','jun','addedAt'];
+    const head = ['CAN ID(16进制)','CAN ID(10进制)','报文名','信号名','中文含义','起始位','长度','字节序','因子','偏移','单位','取值范围','信号描述','各出处定义','差异标注','修正建议','Juniper适用性','收藏时间'];
     const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
     const lines = ['\ufeff' + head.map(q).join(',')];
     list.forEach(r => lines.push(cols.map(c => q(r[c])).join(',')));
